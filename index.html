@@ -7,18 +7,19 @@
 <meta name="description" content="生まれた夜の月と、あなたの心が選ぶ答え。ふたつの声から導かれる16の魂の型。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg1: #07051a;
-  --bg2: #171037;
-  --bg3: #2a1a52;
-  --gold: #e9c98a;
-  --gold2: #fff1c9;
-  --text: #ece6ff;
-  --sub: #a99fcf;
-  --line: rgba(233, 201, 138, 0.35);
-  --card: rgba(255, 255, 255, 0.05);
+  --bg1: #020a2c;
+  --bg2: #061650;
+  --bg3: #0d2a86;
+  --gold: #d9b864;
+  --gold2: #fff0c2;
+  --text: #e8f0ff;
+  --sub: #9fb4e8;
+  --cyan: #6fd3ff;
+  --line: rgba(217, 184, 100, 0.45);
+  --card: rgba(4, 16, 66, 0.62);
   --star: #ffe9b0;
   --moon: #fff4d6;
   --moon-dark: #2a2450;
@@ -26,7 +27,12 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { min-height: 100%; }
 body {
-  background: radial-gradient(ellipse at 50% -10%, var(--bg3), var(--bg2) 45%, var(--bg1) 100%) fixed;
+  /* ベルベットのカーテン：縦の襞と、上から差す青い光 */
+  background:
+    radial-gradient(ellipse at 50% -5%, rgba(90, 160, 255, 0.42), transparent 55%),
+    radial-gradient(ellipse at 50% 110%, rgba(0, 0, 0, 0.6), transparent 60%),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.32) 0, rgba(120, 160, 255, 0.07) 26px, rgba(0, 0, 0, 0.32) 52px),
+    linear-gradient(180deg, var(--bg3), var(--bg2) 45%, var(--bg1)) fixed;
   background-color: var(--bg1);
   color: var(--text);
   font-family: "Zen Kaku Gothic New", sans-serif;
@@ -35,7 +41,20 @@ body {
   overflow-x: hidden;
 }
 #sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 32px 16px 64px; }
+/* 上下のアールデコの金の縁 */
+body::before, body::after {
+  content: ""; position: fixed; left: 0; right: 0; height: 14px; z-index: 2; pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold2) 50%, var(--gold) 80%, transparent) center / 100% 1px no-repeat,
+    repeating-linear-gradient(135deg, rgba(217, 184, 100, 0.55) 0 2px, transparent 2px 9px);
+}
+body::before { top: 0; border-bottom: 1px solid var(--line); background-color: rgba(2, 8, 40, 0.85); }
+body::after { bottom: 0; border-top: 1px solid var(--line); background-color: rgba(2, 8, 40, 0.85); }
+.butterfly { position: fixed; z-index: 1; width: 34px; height: 34px; pointer-events: none; filter: drop-shadow(0 0 8px var(--cyan)); opacity: 0.85; }
+.butterfly svg { width: 100%; height: 100%; animation: flap 0.5s ease-in-out infinite alternate; transform-origin: 50% 50%; }
+@keyframes flap { to { transform: scaleX(0.25); } }
+.deco-title { font-family: "Cinzel", serif; letter-spacing: 0.45em; margin-right: -0.45em; color: var(--gold); font-size: 13px; }
+main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 40px 16px 72px; }
 .screen { display: none; animation: fade 0.8s ease both; }
 .screen.on { display: block; }
 @keyframes fade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
@@ -47,28 +66,32 @@ h1, h2, h3 { font-family: "Shippori Mincho", serif; font-weight: 700; }
 
 /* タイトル */
 .title-wrap { min-height: 82vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 18px; }
-.title-moon { width: 150px; height: 150px; filter: drop-shadow(0 0 30px rgba(255, 236, 190, 0.55)); animation: float 6s ease-in-out infinite; }
+.title-emblem { position: relative; width: 260px; height: 260px; display: grid; place-items: center; }
+.title-clock { position: absolute; inset: 0; width: 100%; height: 100%; animation: spin 120s linear infinite; opacity: 0.9; }
+.title-moon { width: 130px; height: 130px; filter: drop-shadow(0 0 30px rgba(170, 210, 255, 0.6)); animation: float 6s ease-in-out infinite; position: relative; }
 @keyframes float { 50% { transform: translateY(-8px); } }
-.title-wrap h1 { font-size: 46px; letter-spacing: 0.3em; margin-right: -0.3em; color: var(--gold2); text-shadow: 0 0 24px rgba(233, 201, 138, 0.6); }
+.title-wrap h1 { font-size: 46px; letter-spacing: 0.3em; margin-right: -0.3em; color: var(--gold2); text-shadow: 0 0 18px rgba(111, 211, 255, 0.55), 0 2px 0 #00103a; }
 .title-wrap .lead { font-family: "Shippori Mincho", serif; font-size: 16px; color: var(--text); }
 .ornament { color: var(--gold); letter-spacing: 0.6em; font-size: 12px; opacity: 0.8; }
 
 .btn {
-  display: inline-block; border: 1px solid var(--gold); color: var(--gold2); background: rgba(233, 201, 138, 0.08);
+  display: inline-block; border: 1px solid var(--gold); color: var(--gold2);
+  background: linear-gradient(180deg, rgba(30, 80, 200, 0.55), rgba(5, 20, 80, 0.85));
+  outline: 1px solid rgba(217, 184, 100, 0.3); outline-offset: 3px;
   font-family: "Shippori Mincho", serif; font-size: 18px; font-weight: 700; letter-spacing: 0.2em;
-  padding: 14px 40px; border-radius: 999px; cursor: pointer; transition: background 0.3s, box-shadow 0.3s;
+  padding: 14px 40px; border-radius: 2px; cursor: pointer; transition: background 0.3s, box-shadow 0.3s;
 }
-.btn:hover, .btn:focus-visible { background: rgba(233, 201, 138, 0.2); box-shadow: 0 0 24px rgba(233, 201, 138, 0.35); outline: none; }
+.btn:hover, .btn:focus-visible { background: linear-gradient(180deg, rgba(60, 130, 255, 0.7), rgba(10, 40, 130, 0.9)); box-shadow: 0 0 24px rgba(111, 211, 255, 0.45); }
 .btn:disabled { opacity: 0.35; cursor: default; box-shadow: none; }
-.btn.ghost { border-color: var(--line); color: var(--sub); font-size: 15px; padding: 10px 28px; background: transparent; }
+.btn.ghost { border-color: var(--line); color: var(--sub); font-size: 15px; padding: 10px 28px; background: rgba(2, 10, 44, 0.5); outline: none; }
 
 /* 生年月日 */
-.panel { border: 1px solid var(--line); border-radius: 20px; background: var(--card); padding: 28px 20px; backdrop-filter: blur(4px); }
+.panel { border: 1px solid var(--gold); border-radius: 2px; background: var(--card); padding: 28px 20px; backdrop-filter: blur(4px); outline: 1px solid rgba(217, 184, 100, 0.3); outline-offset: -7px; }
 .step-title { font-size: 22px; text-align: center; color: var(--gold2); margin-bottom: 8px; }
 .selects { display: flex; gap: 8px; justify-content: center; margin: 24px 0; }
 select {
-  appearance: none; -webkit-appearance: none; background: rgba(255, 255, 255, 0.06); color: var(--text);
-  border: 1px solid var(--line); border-radius: 12px; padding: 12px 10px; font-size: 18px; font-family: inherit; text-align: center;
+  appearance: none; -webkit-appearance: none; background: rgba(2, 10, 44, 0.7); color: var(--text);
+  border: 1px solid var(--line); border-radius: 2px; padding: 12px 10px; font-size: 18px; font-family: inherit; text-align: center;
 }
 select:focus { outline: 2px solid var(--gold); }
 select option { background: var(--bg2); color: var(--text); }
@@ -86,17 +109,17 @@ select option { background: var(--bg2); color: var(--text); }
   transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
 }
 .likert button:hover, .likert button:focus-visible { transform: scale(1.1); outline: none; }
-.likert .l2 { width: 58px; height: 58px; border-color: #b9a1ff; }
-.likert .l1 { width: 46px; height: 46px; border-color: #b9a1ff; }
+.likert .l2 { width: 58px; height: 58px; border-color: #6fd3ff; }
+.likert .l1 { width: 46px; height: 46px; border-color: #6fd3ff; }
 .likert .l0 { width: 36px; height: 36px; border-color: #8b84a8; }
 .likert .r1 { width: 46px; height: 46px; border-color: var(--gold); }
 .likert .r2 { width: 58px; height: 58px; border-color: var(--gold); }
-.likert button.picked.l2, .likert button.picked.l1 { background: #b9a1ff; box-shadow: 0 0 18px #b9a1ff; }
+.likert button.picked.l2, .likert button.picked.l1 { background: #6fd3ff; box-shadow: 0 0 18px #6fd3ff; }
 .likert button.picked.l0 { background: #8b84a8; }
 .likert button.picked.r1, .likert button.picked.r2 { background: var(--gold); box-shadow: 0 0 18px var(--gold); }
 .likert-labels { display: flex; justify-content: space-between; margin-top: 10px; font-size: 13px; }
 .likert-labels .agree { color: var(--gold); }
-.likert-labels .disagree { color: #b9a1ff; }
+.likert-labels .disagree { color: #6fd3ff; }
 .q-back { margin-top: 30px; text-align: center; }
 
 /* 読み解き中 */
@@ -110,44 +133,56 @@ select option { background: var(--bg2); color: var(--text); }
 
 /* 結果 */
 .r-head { text-align: center; padding-top: 8px; }
-.clan { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 4px 16px; font-size: 14px; color: var(--gold); font-family: "Shippori Mincho", serif; letter-spacing: 0.1em; }
-.r-moon { width: 120px; height: 120px; margin: 18px auto 6px; display: block; filter: drop-shadow(0 0 22px rgba(255, 236, 190, 0.5)); }
-.code { font-family: "Shippori Mincho", serif; font-size: 22px; letter-spacing: 0.6em; margin-right: -0.6em; color: var(--sub); }
-.type-name { font-size: 48px; color: var(--gold2); text-shadow: 0 0 26px rgba(233, 201, 138, 0.55); letter-spacing: 0.15em; margin-right: -0.15em; line-height: 1.4; }
-.type-en { font-family: "Shippori Mincho", serif; color: var(--gold); letter-spacing: 0.3em; font-size: 13px; }
+.tarot {
+  width: 250px; margin: 14px auto 18px; padding: 16px 14px 18px; position: relative;
+  background: radial-gradient(ellipse at 50% 35%, rgba(80, 150, 255, 0.45), transparent 65%), linear-gradient(180deg, #0c2a8a, #04114a);
+  border: 2px solid var(--gold); outline: 1px solid var(--gold); outline-offset: -9px;
+  box-shadow: 0 0 40px rgba(111, 211, 255, 0.35), 0 18px 40px rgba(0, 0, 0, 0.5);
+  animation: cardin 1.2s cubic-bezier(.2, .8, .2, 1) both;
+}
+@keyframes cardin { from { transform: perspective(800px) rotateY(90deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.tarot .numeral { font-family: "Cinzel", serif; color: var(--gold2); font-size: 22px; letter-spacing: 0.15em; }
+.tarot .rays { position: absolute; left: 50%; top: 46%; width: 210px; height: 210px; margin: -105px 0 0 -105px; opacity: 0.5; pointer-events: none; }
+.tarot .type-en { margin-top: 2px; }
+.tarot-name { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 6px; }
+.clan { display: inline-block; border: 1px solid var(--line); border-radius: 2px; background: rgba(2, 10, 44, 0.6); padding: 4px 16px; font-size: 14px; color: var(--gold); font-family: "Shippori Mincho", serif; letter-spacing: 0.1em; }
+.r-moon { width: 120px; height: 120px; margin: 10px auto 6px; display: block; position: relative; filter: drop-shadow(0 0 22px rgba(170, 210, 255, 0.6)); }
+.code { font-family: "Cinzel", serif; font-size: 22px; letter-spacing: 0.6em; margin-right: -0.6em; color: var(--cyan); }
+.type-name { font-size: 40px; color: var(--gold2); text-shadow: 0 0 20px rgba(111, 211, 255, 0.6); letter-spacing: 0.15em; margin-right: -0.15em; line-height: 1.4; }
+.type-en { font-family: "Cinzel", serif; color: var(--gold); letter-spacing: 0.3em; font-size: 12px; }
 .catch { font-family: "Shippori Mincho", serif; font-size: 18px; margin: 18px 0 6px; }
 section.block { margin-top: 26px; }
 .block h3 { font-size: 17px; color: var(--gold); display: flex; align-items: center; gap: 10px; margin-bottom: 12px; letter-spacing: 0.1em; }
 .block h3::before, .block h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .desc { font-size: 15.5px; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.two ul { list-style: none; border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: var(--card); font-size: 14px; }
+.two ul { list-style: none; border: 1px solid var(--line); border-radius: 2px; padding: 14px; background: var(--card); font-size: 14px; }
 .two li { padding-left: 1.1em; text-indent: -1.1em; margin-top: 4px; }
 .two li::before { content: "✦ "; color: var(--gold); }
-.two .shadow li::before { color: #b9a1ff; }
+.two .shadow li::before { color: #6fd3ff; }
 .two h4 { font-family: "Shippori Mincho", serif; font-size: 15px; margin-bottom: 4px; }
-.axis { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: var(--card); margin-bottom: 10px; }
+.axis { border: 1px solid var(--line); border-radius: 2px; padding: 12px 14px; background: var(--card); margin-bottom: 10px; }
 .axis-top { display: flex; justify-content: space-between; font-size: 13px; color: var(--sub); }
 .axis-top b { color: var(--text); font-weight: 700; }
 .axis-top .win { color: var(--gold2); }
-.meter { position: relative; height: 6px; border-radius: 3px; background: linear-gradient(90deg, rgba(233, 201, 138, 0.5), rgba(255, 255, 255, 0.08) 50%, rgba(185, 161, 255, 0.5)); margin: 10px 0 8px; }
-.meter i { position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--gold2); box-shadow: 0 0 10px var(--gold2); transition: left 1.2s ease; }
+.meter { position: relative; height: 6px; border-radius: 0; background: linear-gradient(90deg, rgba(217, 184, 100, 0.6), rgba(255, 255, 255, 0.08) 50%, rgba(111, 211, 255, 0.6)); margin: 10px 0 8px; }
+.meter i { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; transform: rotate(45deg); background: var(--gold2); box-shadow: 0 0 10px var(--gold2); transition: left 1.2s ease; }
 .axis-note { font-size: 13px; }
 .axis-note .tag { display: inline-block; font-size: 12px; border-radius: 999px; padding: 0 10px; margin-right: 6px; }
-.tag.star { background: rgba(185, 161, 255, 0.2); color: #d9ccff; }
+.tag.star { background: rgba(111, 211, 255, 0.18); color: #bfeaff; }
 .tag.self { background: rgba(255, 140, 80, 0.2); color: #ffc9a6; }
-.facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14.5px; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--card); }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14.5px; border: 1px solid var(--line); border-radius: 2px; padding: 14px 16px; background: var(--card); }
 .facts dt { color: var(--sub); }
 .people { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-.people span { border: 1px solid var(--line); border-radius: 999px; padding: 4px 14px; font-size: 14px; background: var(--card); }
+.people span { border: 1px solid var(--line); border-radius: 2px; padding: 4px 14px; font-size: 14px; background: var(--card); }
 .people small { color: var(--sub); margin-left: 4px; font-size: 11px; }
-.match { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--card); }
+.match { border: 1px solid var(--line); border-radius: 2px; padding: 14px 16px; background: var(--card); }
 .match b { font-family: "Shippori Mincho", serif; color: var(--gold2); font-size: 20px; }
 .message { font-family: "Shippori Mincho", serif; font-size: 17px; text-align: center; padding: 22px 16px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); line-height: 2.1; }
 .actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 32px; }
 .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); background: rgba(20, 14, 50, 0.95); border: 1px solid var(--gold); color: var(--gold2); padding: 8px 18px; border-radius: 999px; font-size: 14px; opacity: 0; transition: opacity 0.4s; z-index: 5; pointer-events: none; }
 .toast.on { opacity: 1; }
-footer { margin-top: 48px; text-align: center; font-size: 12px; color: var(--sub); }
+footer { font-family: "Shippori Mincho", serif; margin-top: 48px; text-align: center; font-size: 12px; color: var(--sub); }
 @media (max-width: 380px) {
   .type-name { font-size: 40px; }
   .q-text { font-size: 19px; }
@@ -167,10 +202,13 @@ footer { margin-top: 48px; text-align: center; font-size: 12px; color: var(--sub
 <!-- タイトル -->
 <div class="screen on" id="s-title">
   <div class="title-wrap">
-    <div class="ornament">✦ ✧ ✦</div>
-    <svg class="title-moon" viewBox="0 0 100 100" id="title-moon" aria-hidden="true"></svg>
+    <div class="deco-title">TSUKUYOMI</div>
+    <div class="title-emblem">
+      <svg class="title-clock" viewBox="0 0 200 200" id="title-clock" aria-hidden="true"></svg>
+      <svg class="title-moon" viewBox="0 0 100 100" id="title-moon" aria-hidden="true"></svg>
+    </div>
     <h1>月詠み診断</h1>
-    <p class="lead">生まれた夜の月と、あなたの心が選ぶ答え。<br>ふたつの声が導く、十六の魂の型。</p>
+    <p class="lead">ようこそ、月詠みの間へ。<br>夢と現実のはざまで、あなたの魂の型を占いましょう。</p>
     <p class="sub">質問は8問・約2分</p>
     <button class="btn" id="b-start">占いをはじめる</button>
   </div>
@@ -218,10 +256,16 @@ footer { margin-top: 48px; text-align: center; font-size: 12px; color: var(--sub
 <div class="screen" id="s-result">
   <div class="r-head">
     <span class="clan" id="r-clan"></span>
-    <svg class="r-moon" viewBox="0 0 100 100" id="r-moon" aria-hidden="true"></svg>
+    <div class="tarot">
+      <div class="numeral" id="r-num"></div>
+      <svg class="rays" viewBox="0 0 100 100" id="r-rays" aria-hidden="true"></svg>
+      <svg class="r-moon" viewBox="0 0 100 100" id="r-moon" aria-hidden="true"></svg>
+      <div class="tarot-name">
+        <h2 class="type-name" id="r-name"></h2>
+        <div class="type-en" id="r-en"></div>
+      </div>
+    </div>
     <div class="code" id="r-code"></div>
-    <h2 class="type-name" id="r-name"></h2>
-    <div class="type-en" id="r-en"></div>
     <p class="catch" id="r-catch"></p>
   </div>
 
@@ -230,7 +274,7 @@ footer { margin-top: 48px; text-align: center; font-size: 12px; color: var(--sub
   <section class="block">
     <div class="two">
       <ul id="r-light"><h4 class="gold">光（あなたの強み）</h4></ul>
-      <ul id="r-shadow" class="shadow"><h4 style="color:#d9ccff">影（気をつけたいこと）</h4></ul>
+      <ul id="r-shadow" class="shadow"><h4 style="color:#bfeaff">影（気をつけたいこと）</h4></ul>
     </div>
   </section>
 
@@ -476,6 +520,58 @@ function drawMoon(svg, age) {
     <path d="${lit}" fill="url(#mg${svg.id})"/>`;
 }
 
+// ---------- 装飾 ----------
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI"];
+
+/** 時計の文字盤（ローマ数字と目盛り） */
+function drawClock(svg) {
+  let h = `<circle cx="100" cy="100" r="96" fill="none" stroke="#d9b864" stroke-width="1.2"/>
+    <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(217,184,100,.45)" stroke-width="0.6"/>
+    <circle cx="100" cy="100" r="62" fill="none" stroke="rgba(111,211,255,.35)" stroke-width="0.6" stroke-dasharray="2 3"/>`;
+  for (let i = 0; i < 60; i++) {
+    const a = i * Math.PI / 30, r1 = i % 5 ? 92 : 89;
+    h += `<line x1="${100 + Math.sin(a) * r1}" y1="${100 - Math.cos(a) * r1}" x2="${100 + Math.sin(a) * 96}" y2="${100 - Math.cos(a) * 96}" stroke="#d9b864" stroke-width="${i % 5 ? 0.5 : 1.2}"/>`;
+  }
+  for (let i = 0; i < 12; i++) {
+    const a = i * Math.PI / 6;
+    h += `<text x="${100 + Math.sin(a) * 77}" y="${100 - Math.cos(a) * 77 + 4}" fill="#d9b864" font-family="Cinzel, serif" font-size="11" text-anchor="middle">${ROMAN[(i + 11) % 12]}</text>`;
+  }
+  svg.innerHTML = h;
+}
+
+/** カードの月の後ろの光線 */
+function drawRays(svg) {
+  let h = "";
+  for (let i = 0; i < 24; i++) {
+    const a = i * Math.PI / 12;
+    h += `<line x1="${50 + Math.sin(a) * 28}" y1="${50 - Math.cos(a) * 28}" x2="${50 + Math.sin(a) * (i % 2 ? 40 : 48)}" y2="${50 - Math.cos(a) * (i % 2 ? 40 : 48)}" stroke="#d9b864" stroke-width="${i % 2 ? 0.4 : 0.8}"/>`;
+  }
+  svg.innerHTML = h;
+}
+
+/** 青い蝶をゆっくり舞わせる */
+function startButterflies() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const wing = `<svg viewBox="0 0 40 40"><defs><linearGradient id="bw" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6f8ff"/><stop offset=".5" stop-color="#6fd3ff"/><stop offset="1" stop-color="#1d5cff"/></linearGradient></defs>
+    <path d="M20 20 C10 2 0 6 3 16 C5 22 12 22 20 20 Z M20 20 C30 2 40 6 37 16 C35 22 28 22 20 20 Z M20 21 C13 24 8 34 14 35 C18 35 19 28 20 21 Z M20 21 C27 24 32 34 26 35 C22 35 21 28 20 21 Z" fill="url(#bw)" opacity=".9"/>
+    <line x1="20" y1="14" x2="20" y2="30" stroke="#e6f8ff" stroke-width="1.2"/></svg>`;
+  for (let k = 0; k < 2; k++) {
+    const b = document.createElement("div");
+    b.className = "butterfly";
+    b.innerHTML = wing;
+    document.body.appendChild(b);
+    let t = Math.random() * 100;
+    const step = () => {
+      t += 0.0025;
+      const x = (Math.sin(t * (1.3 + k * 0.4) + k * 2) * 0.42 + 0.5) * innerWidth;
+      const y = (Math.sin(t * (0.9 + k * 0.3) + k) * 0.38 + 0.5) * innerHeight;
+      b.style.transform = `translate(${x - 17}px, ${y - 17}px) rotate(${Math.sin(t * 3) * 20}deg)`;
+      requestAnimationFrame(step);
+    };
+    step();
+  }
+}
+
 // ---------- 星空 ----------
 function startSky() {
   const cv = document.getElementById("sky");
@@ -484,9 +580,10 @@ function startSky() {
   const resize = () => {
     cv.width = innerWidth * devicePixelRatio;
     cv.height = innerHeight * devicePixelRatio;
-    stars = Array.from({ length: Math.floor(innerWidth * innerHeight / 3500) }, () => ({
+    stars = Array.from({ length: Math.floor(innerWidth * innerHeight / 5000) }, () => ({
       x: Math.random() * cv.width, y: Math.random() * cv.height,
-      r: (Math.random() * 1.2 + 0.3) * devicePixelRatio, t: Math.random() * 6.28, s: Math.random() * 0.02 + 0.005,
+      r: (Math.random() * 1.4 + 0.3) * devicePixelRatio, t: Math.random() * 6.28, s: Math.random() * 0.02 + 0.005,
+      v: (Math.random() * 0.5 + 0.15) * devicePixelRatio,
     }));
   };
   resize();
@@ -496,8 +593,10 @@ function startSky() {
     ctx.clearRect(0, 0, cv.width, cv.height);
     for (const s of stars) {
       s.t += s.s;
-      ctx.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(s.t));
-      ctx.fillStyle = "#ffe9b0";
+      s.y -= s.v;
+      if (s.y < -4) { s.y = cv.height + 4; s.x = Math.random() * cv.width; }
+      ctx.globalAlpha = 0.25 + 0.6 * Math.abs(Math.sin(s.t));
+      ctx.fillStyle = s.r > 1.2 * devicePixelRatio ? "#cdeeff" : "#8fc8ff";
       ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
     }
     if (!still) requestAnimationFrame(frame);
@@ -601,13 +700,15 @@ function renderResult() {
   $("r-clan").textContent = `${clan.icon} ${clan.name}`;
   drawMoon($("r-moon"), r.star.age);
   $("r-code").textContent = r.code;
+  $("r-num").textContent = ROMAN[Object.keys(TYPES).indexOf(r.code)];
+  drawRays($("r-rays"));
   $("r-name").textContent = t.name;
   $("r-en").textContent = t.en;
   $("r-catch").textContent = t.catch;
   $("r-desc").textContent = t.desc + `\n${clan.name}――${clan.desc}。`;
   $("r-desc").style.whiteSpace = "pre-line";
   $("r-light").innerHTML = `<h4 class="gold">光（あなたの強み）</h4>` + t.light.map((x) => `<li>${x}</li>`).join("");
-  $("r-shadow").innerHTML = `<h4 style="color:#d9ccff">影（気をつけたいこと）</h4>` + t.shadow.map((x) => `<li>${x}</li>`).join("");
+  $("r-shadow").innerHTML = `<h4 style="color:#bfeaff">影（気をつけたいこと）</h4>` + t.shadow.map((x) => `<li>${x}</li>`).join("");
 
   // 軸ごとの内訳
   $("r-axes").innerHTML = r.axes.map((a) => {
@@ -667,6 +768,8 @@ function share() {
 
 // ---------- 起動 ----------
 startSky();
+startButterflies();
+drawClock($("title-clock"));
 drawMoon($("title-moon"), 11.5);
 setupBirth();
 $("b-start").onclick = () => show("s-birth");
