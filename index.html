@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>月詠み診断</title>
+<title>高次人格測定装置ツクヨミⅡ</title>
 <meta name="description" content="生まれた夜の月と、あなたの心が選ぶ答え。ふたつの声から導かれる16の魂の型。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,6 +87,7 @@ h1, h2, h3 { font-family: "Shippori Mincho B1", "Shippori Mincho", serif; font-w
   font-size: 44px; letter-spacing: 0.22em; margin-right: -0.22em; color: var(--white); line-height: 1.3;
   text-shadow: 0 0 22px rgba(63, 216, 255, 0.75), 0 3px 0 #000a2a; transform: rotate(-4deg);
 }
+.title-wrap h1 .h1-sub { display: block; font-size: 20px; letter-spacing: 0.35em; margin-right: -0.35em; color: var(--ice); text-shadow: 0 0 12px rgba(63, 216, 255, 0.6); }
 .title-wrap .lead { font-family: "Shippori Mincho B1", serif; font-size: 16px; color: var(--text); }
 
 /* 青い札のボタン（白の二重枠・斜め配置） */
@@ -232,15 +233,15 @@ footer { font-family: "Shippori Mincho B1", serif; margin-top: 48px; text-align:
 <!-- タイトル -->
 <div class="screen on" id="s-title">
   <div class="title-wrap">
-    <div class="deco-title">TSUKUYOMI</div>
+    <div class="deco-title">TSUKUYOMI II</div>
     <div class="title-emblem">
       <svg class="title-clock" viewBox="0 0 200 200" id="title-clock" aria-hidden="true"></svg>
       <svg class="title-moon" viewBox="0 0 100 100" id="title-moon" aria-hidden="true"></svg>
     </div>
-    <h1>月詠み診断</h1>
-    <p class="lead">ようこそ、月詠みの間へ。<br>夢と現実のはざまで、あなたの魂の型を占いましょう。</p>
+    <h1><span class="h1-sub">高次人格測定装置</span>ツクヨミⅡ</h1>
+    <p class="lead">ようこそ。<br>夢と現実のはざまで、あなたの魂の型を測定します。</p>
     <p class="sub">質問は8問・約2分</p>
-    <button class="btn" id="b-start">占いをはじめる<span class="en">Begin the Reading</span></button>
+    <button class="btn" id="b-start">測定をはじめる<span class="en">Begin the Measurement</span></button>
   </div>
 </div>
 
@@ -325,7 +326,7 @@ footer { font-family: "Shippori Mincho B1", serif; margin-top: 48px; text-align:
   </div>
 </div>
 
-<footer>月詠み診断 ― 占いは、あなたの心を照らすひとつの灯りです。</footer>
+<footer>高次人格測定装置ツクヨミⅡ ― 占いは、あなたの心を照らすひとつの灯りです。</footer>
 </main>
 <div class="toast" id="toast">コピーしました</div>
 
@@ -787,10 +788,10 @@ function renderResult() {
 
 function share() {
   const r = state.result;
-  const text = `月詠み診断の結果、私の魂の型は「${r.name}」（${r.code}）でした。\n${r.catch}\n`;
+  const text = `高次人格測定装置ツクヨミⅡの測定結果、私の魂の型は「${r.name}」（${r.code}）でした。\n${r.catch}\n`;
   const url = location.href.split("#")[0];
   if (navigator.share) {
-    navigator.share({ title: "月詠み診断", text, url }).catch(() => {});
+    navigator.share({ title: "高次人格測定装置ツクヨミⅡ", text, url }).catch(() => {});
     return;
   }
   const done = () => { $("toast").classList.add("on"); setTimeout(() => $("toast").classList.remove("on"), 1800); };
