@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>月詠み診断</title>
+<meta name="description" content="生まれた夜の月と、あなたの心が選ぶ答え。ふたつの声から導かれる16の魂の型。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg1: #07051a;
+  --bg2: #171037;
+  --bg3: #2a1a52;
+  --gold: #e9c98a;
+  --gold2: #fff1c9;
+  --text: #ece6ff;
+  --sub: #a99fcf;
+  --line: rgba(233, 201, 138, 0.35);
+  --card: rgba(255, 255, 255, 0.05);
+  --star: #ffe9b0;
+  --moon: #fff4d6;
+  --moon-dark: #2a2450;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
+body {
+  background: radial-gradient(ellipse at 50% -10%, var(--bg3), var(--bg2) 45%, var(--bg1) 100%) fixed;
+  background-color: var(--bg1);
+  color: var(--text);
+  font-family: "Zen Kaku Gothic New", sans-serif;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+#sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 32px 16px 64px; }
+.screen { display: none; animation: fade 0.8s ease both; }
+.screen.on { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.mincho { font-family: "Shippori Mincho", serif; }
+h1, h2, h3 { font-family: "Shippori Mincho", serif; font-weight: 700; }
+.center { text-align: center; }
+.gold { color: var(--gold); }
+.sub { color: var(--sub); font-size: 14px; }
+
+/* タイトル */
+.title-wrap { min-height: 82vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 18px; }
+.title-moon { width: 150px; height: 150px; filter: drop-shadow(0 0 30px rgba(255, 236, 190, 0.55)); animation: float 6s ease-in-out infinite; }
+@keyframes float { 50% { transform: translateY(-8px); } }
+.title-wrap h1 { font-size: 46px; letter-spacing: 0.3em; margin-right: -0.3em; color: var(--gold2); text-shadow: 0 0 24px rgba(233, 201, 138, 0.6); }
+.title-wrap .lead { font-family: "Shippori Mincho", serif; font-size: 16px; color: var(--text); }
+.ornament { color: var(--gold); letter-spacing: 0.6em; font-size: 12px; opacity: 0.8; }
+
+.btn {
+  display: inline-block; border: 1px solid var(--gold); color: var(--gold2); background: rgba(233, 201, 138, 0.08);
+  font-family: "Shippori Mincho", serif; font-size: 18px; font-weight: 700; letter-spacing: 0.2em;
+  padding: 14px 40px; border-radius: 999px; cursor: pointer; transition: background 0.3s, box-shadow 0.3s;
+}
+.btn:hover, .btn:focus-visible { background: rgba(233, 201, 138, 0.2); box-shadow: 0 0 24px rgba(233, 201, 138, 0.35); outline: none; }
+.btn:disabled { opacity: 0.35; cursor: default; box-shadow: none; }
+.btn.ghost { border-color: var(--line); color: var(--sub); font-size: 15px; padding: 10px 28px; background: transparent; }
+
+/* 生年月日 */
+.panel { border: 1px solid var(--line); border-radius: 20px; background: var(--card); padding: 28px 20px; backdrop-filter: blur(4px); }
+.step-title { font-size: 22px; text-align: center; color: var(--gold2); margin-bottom: 8px; }
+.selects { display: flex; gap: 8px; justify-content: center; margin: 24px 0; }
+select {
+  appearance: none; -webkit-appearance: none; background: rgba(255, 255, 255, 0.06); color: var(--text);
+  border: 1px solid var(--line); border-radius: 12px; padding: 12px 10px; font-size: 18px; font-family: inherit; text-align: center;
+}
+select:focus { outline: 2px solid var(--gold); }
+select option { background: var(--bg2); color: var(--text); }
+.sel-year { width: 110px; } .sel-md { width: 78px; }
+
+/* 質問 */
+.progress { display: flex; gap: 6px; justify-content: center; margin-bottom: 26px; }
+.progress span { width: 22px; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.15); transition: background 0.4s; }
+.progress span.done { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+.q-num { text-align: center; color: var(--gold); font-family: "Shippori Mincho", serif; letter-spacing: 0.3em; font-size: 14px; }
+.q-text { font-family: "Shippori Mincho", serif; font-size: 22px; text-align: center; margin: 14px 0 34px; min-height: 4.2em; display: flex; align-items: center; justify-content: center; line-height: 1.7; }
+.likert { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 4px; }
+.likert button {
+  border-radius: 50%; border: 2px solid; background: transparent; cursor: pointer; flex: none;
+  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.likert button:hover, .likert button:focus-visible { transform: scale(1.1); outline: none; }
+.likert .l2 { width: 58px; height: 58px; border-color: #b9a1ff; }
+.likert .l1 { width: 46px; height: 46px; border-color: #b9a1ff; }
+.likert .l0 { width: 36px; height: 36px; border-color: #8b84a8; }
+.likert .r1 { width: 46px; height: 46px; border-color: var(--gold); }
+.likert .r2 { width: 58px; height: 58px; border-color: var(--gold); }
+.likert button.picked.l2, .likert button.picked.l1 { background: #b9a1ff; box-shadow: 0 0 18px #b9a1ff; }
+.likert button.picked.l0 { background: #8b84a8; }
+.likert button.picked.r1, .likert button.picked.r2 { background: var(--gold); box-shadow: 0 0 18px var(--gold); }
+.likert-labels { display: flex; justify-content: space-between; margin-top: 10px; font-size: 13px; }
+.likert-labels .agree { color: var(--gold); }
+.likert-labels .disagree { color: #b9a1ff; }
+.q-back { margin-top: 30px; text-align: center; }
+
+/* 読み解き中 */
+.reading { min-height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; text-align: center; }
+.orbit { width: 140px; height: 140px; position: relative; }
+.orbit .core { position: absolute; inset: 40px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fffbe9, #f2d896 60%, #c79a4d); box-shadow: 0 0 40px rgba(255, 220, 150, 0.7); }
+.orbit .ring { position: absolute; inset: 0; border: 1px dashed var(--line); border-radius: 50%; animation: spin 3s linear infinite; }
+.orbit .ring::after { content: ""; position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--text); box-shadow: 0 0 12px var(--text); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.reading p { font-family: "Shippori Mincho", serif; font-size: 18px; color: var(--gold2); min-height: 1.8em; }
+
+/* 結果 */
+.r-head { text-align: center; padding-top: 8px; }
+.clan { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 4px 16px; font-size: 14px; color: var(--gold); font-family: "Shippori Mincho", serif; letter-spacing: 0.1em; }
+.r-moon { width: 120px; height: 120px; margin: 18px auto 6px; display: block; filter: drop-shadow(0 0 22px rgba(255, 236, 190, 0.5)); }
+.code { font-family: "Shippori Mincho", serif; font-size: 22px; letter-spacing: 0.6em; margin-right: -0.6em; color: var(--sub); }
+.type-name { font-size: 48px; color: var(--gold2); text-shadow: 0 0 26px rgba(233, 201, 138, 0.55); letter-spacing: 0.15em; margin-right: -0.15em; line-height: 1.4; }
+.type-en { font-family: "Shippori Mincho", serif; color: var(--gold); letter-spacing: 0.3em; font-size: 13px; }
+.catch { font-family: "Shippori Mincho", serif; font-size: 18px; margin: 18px 0 6px; }
+section.block { margin-top: 26px; }
+.block h3 { font-size: 17px; color: var(--gold); display: flex; align-items: center; gap: 10px; margin-bottom: 12px; letter-spacing: 0.1em; }
+.block h3::before, .block h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.desc { font-size: 15.5px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.two ul { list-style: none; border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: var(--card); font-size: 14px; }
+.two li { padding-left: 1.1em; text-indent: -1.1em; margin-top: 4px; }
+.two li::before { content: "✦ "; color: var(--gold); }
+.two .shadow li::before { color: #b9a1ff; }
+.two h4 { font-family: "Shippori Mincho", serif; font-size: 15px; margin-bottom: 4px; }
+.axis { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: var(--card); margin-bottom: 10px; }
+.axis-top { display: flex; justify-content: space-between; font-size: 13px; color: var(--sub); }
+.axis-top b { color: var(--text); font-weight: 700; }
+.axis-top .win { color: var(--gold2); }
+.meter { position: relative; height: 6px; border-radius: 3px; background: linear-gradient(90deg, rgba(233, 201, 138, 0.5), rgba(255, 255, 255, 0.08) 50%, rgba(185, 161, 255, 0.5)); margin: 10px 0 8px; }
+.meter i { position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--gold2); box-shadow: 0 0 10px var(--gold2); transition: left 1.2s ease; }
+.axis-note { font-size: 13px; }
+.axis-note .tag { display: inline-block; font-size: 12px; border-radius: 999px; padding: 0 10px; margin-right: 6px; }
+.tag.star { background: rgba(185, 161, 255, 0.2); color: #d9ccff; }
+.tag.self { background: rgba(255, 140, 80, 0.2); color: #ffc9a6; }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14.5px; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--card); }
+.facts dt { color: var(--sub); }
+.people { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.people span { border: 1px solid var(--line); border-radius: 999px; padding: 4px 14px; font-size: 14px; background: var(--card); }
+.people small { color: var(--sub); margin-left: 4px; font-size: 11px; }
+.match { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--card); }
+.match b { font-family: "Shippori Mincho", serif; color: var(--gold2); font-size: 20px; }
+.message { font-family: "Shippori Mincho", serif; font-size: 17px; text-align: center; padding: 22px 16px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); line-height: 2.1; }
+.actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 32px; }
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); background: rgba(20, 14, 50, 0.95); border: 1px solid var(--gold); color: var(--gold2); padding: 8px 18px; border-radius: 999px; font-size: 14px; opacity: 0; transition: opacity 0.4s; z-index: 5; pointer-events: none; }
+.toast.on { opacity: 1; }
+footer { margin-top: 48px; text-align: center; font-size: 12px; color: var(--sub); }
+@media (max-width: 380px) {
+  .type-name { font-size: 40px; }
+  .q-text { font-size: 19px; }
+  .likert .l2, .likert .r2 { width: 50px; height: 50px; }
+  .likert .l1, .likert .r1 { width: 40px; height: 40px; }
+  .two { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<main>
+
+<!-- タイトル -->
+<div class="screen on" id="s-title">
+  <div class="title-wrap">
+    <div class="ornament">✦ ✧ ✦</div>
+    <svg class="title-moon" viewBox="0 0 100 100" id="title-moon" aria-hidden="true"></svg>
+    <h1>月詠み診断</h1>
+    <p class="lead">生まれた夜の月と、あなたの心が選ぶ答え。<br>ふたつの声が導く、十六の魂の型。</p>
+    <p class="sub">質問は8問・約2分</p>
+    <button class="btn" id="b-start">占いをはじめる</button>
+  </div>
+</div>
+
+<!-- 生年月日 -->
+<div class="screen" id="s-birth">
+  <div class="panel">
+    <h2 class="step-title">あなたが生まれた日</h2>
+    <p class="sub center">その夜の月の形と、星の配置を読み解きます</p>
+    <div class="selects">
+      <select id="by" class="sel-year" aria-label="生まれた年"></select>
+      <select id="bm" class="sel-md" aria-label="生まれた月"></select>
+      <select id="bd" class="sel-md" aria-label="生まれた日"></select>
+    </div>
+    <div class="center"><button class="btn" id="b-birth" disabled>次へ</button></div>
+  </div>
+</div>
+
+<!-- 質問 -->
+<div class="screen" id="s-q">
+  <div class="progress" id="progress"></div>
+  <div class="q-num" id="q-num"></div>
+  <p class="q-text" id="q-text"></p>
+  <div class="likert" id="likert">
+    <button class="r2" data-v="2" aria-label="とてもそう思う"></button>
+    <button class="r1" data-v="1" aria-label="ややそう思う"></button>
+    <button class="l0" data-v="0" aria-label="どちらでもない"></button>
+    <button class="l1" data-v="-1" aria-label="あまりそう思わない"></button>
+    <button class="l2" data-v="-2" aria-label="まったくそう思わない"></button>
+  </div>
+  <div class="likert-labels"><span class="agree">そう思う</span><span class="disagree">そう思わない</span></div>
+  <div class="q-back"><button class="btn ghost" id="b-back">ひとつ戻る</button></div>
+</div>
+
+<!-- 読み解き中 -->
+<div class="screen" id="s-reading">
+  <div class="reading">
+    <div class="orbit"><div class="ring"></div><div class="core"></div></div>
+    <p id="reading-text"></p>
+  </div>
+</div>
+
+<!-- 結果 -->
+<div class="screen" id="s-result">
+  <div class="r-head">
+    <span class="clan" id="r-clan"></span>
+    <svg class="r-moon" viewBox="0 0 100 100" id="r-moon" aria-hidden="true"></svg>
+    <div class="code" id="r-code"></div>
+    <h2 class="type-name" id="r-name"></h2>
+    <div class="type-en" id="r-en"></div>
+    <p class="catch" id="r-catch"></p>
+  </div>
+
+  <section class="block"><h3>魂のかたち</h3><p class="desc" id="r-desc"></p></section>
+
+  <section class="block">
+    <div class="two">
+      <ul id="r-light"><h4 class="gold">光（あなたの強み）</h4></ul>
+      <ul id="r-shadow" class="shadow"><h4 style="color:#d9ccff">影（気をつけたいこと）</h4></ul>
+    </div>
+  </section>
+
+  <section class="block"><h3>星の声と、あなたの声</h3><div id="r-axes"></div></section>
+
+  <section class="block"><h3>あなたが生まれた夜</h3><dl class="facts" id="r-facts"></dl></section>
+
+  <section class="block"><h3>同じ星を持って生まれた偉人</h3><div class="people" id="r-people"></div></section>
+
+  <section class="block"><h3>魂の共鳴相手</h3><div class="match" id="r-match"></div></section>
+
+  <section class="block"><h3>月からの伝言</h3><p class="message" id="r-message"></p></section>
+
+  <div class="actions">
+    <button class="btn" id="b-share">結果をシェアする</button>
+    <button class="btn ghost" id="b-again">もう一度占う</button>
+  </div>
+</div>
+
+<footer>月詠み診断 ― 占いは、あなたの心を照らすひとつの灯りです。</footer>
+</main>
+<div class="toast" id="toast">コピーしました</div>
+
+<script>
+"use strict";
+
+// ---------- 天体の計算 ----------
+const SYN = 29.530588853;                     // 月の満ち欠けの周期（日）
+const REF_NEW_MOON = Date.UTC(2000, 0, 6, 18, 14); // 基準の新月
+
+/** 生まれた日（日本時間の正午）の月齢 */
+function moonAge(y, m, d) {
+  const t = Date.UTC(y, m - 1, d, 3, 0);
+  const days = (t - REF_NEW_MOON) / 86400000;
+  return ((days % SYN) + SYN) % SYN;
+}
+
+const SIGNS = [ // [開始の月日, 名前, 元素]
+  [101, "山羊座", "地"], [120, "水瓶座", "風"], [219, "魚座", "水"], [321, "牡羊座", "火"],
+  [420, "牡牛座", "地"], [521, "双子座", "風"], [622, "蟹座", "水"], [723, "獅子座", "火"],
+  [823, "乙女座", "地"], [923, "天秤座", "風"], [1024, "蠍座", "水"], [1123, "射手座", "火"], [1222, "山羊座", "地"],
+];
+function sign(m, d) {
+  const md = m * 100 + d;
+  let s = SIGNS[0];
+  for (const x of SIGNS) if (md >= x[0]) s = x;
+  return s;
+}
+
+/** 生年月日から決まる「星の型」 */
+function starAxes(y, m, d) {
+  const a = moonAge(y, m, d);
+  const md = m * 100 + d;
+  return {
+    age: a,
+    c: a < SYN / 2 ? "C" : "R",
+    f: Math.abs(a - SYN / 2) < SYN / 4 ? "F" : "N",
+    s: ["火", "風"].includes(sign(m, d)[2]) ? "S" : "W",
+    a: (md >= 1222 || md <= 621) ? "A" : "D",
+  };
+}
+
+const MOON_NAMES = { 1: "新月（朔）", 2: "既朔", 3: "三日月", 4: "四日月", 7: "上弦の月", 8: "上弦の月", 10: "十日夜の月", 13: "十三夜", 14: "小望月", 15: "十五夜（望月）", 16: "十六夜", 17: "立待月", 18: "居待月", 19: "寝待月", 20: "更待月", 22: "下弦の月", 23: "下弦の月", 26: "有明月", 30: "晦（みそか）" };
+function moonName(age) {
+  const day = Math.floor(age) + 1;
+  if (MOON_NAMES[day]) return MOON_NAMES[day];
+  if (day < 7) return "若月";
+  if (day < 13) return "上弦すぎの月";
+  if (day < 22) return "宵の明けた月";
+  return "暁の細い月";
+}
+
+// 旧暦の月：その新月から次の新月までに含まれる「中気」で決まる
+const CHUKI = [[1, 20, 12], [2, 19, 1], [3, 20, 2], [4, 20, 3], [5, 21, 4], [6, 21, 5], [7, 23, 6], [8, 23, 7], [9, 23, 8], [10, 23, 9], [11, 22, 10], [12, 22, 11]];
+const LUNAR = [
+  ["睦月", "人と人が睦み合う、絆の月"], ["如月", "衣を重ねて、内なる熱を守る月"], ["弥生", "草木がいよいよ生い茂る、芽吹きの月"],
+  ["卯月", "卯の花が咲く、清らかな始まりの月"], ["皐月", "早苗を植える、希望を育てる月"], ["水無月", "田に水を注ぐ、恵みの月"],
+  ["文月", "想いを文にしたためる、言葉の月"], ["葉月", "葉が色づきはじめる、移ろいの月"], ["長月", "夜が長くなる、物思いの月"],
+  ["神無月", "神々が集う、縁を結ぶ月"], ["霜月", "霜が降りる、静かに研ぎ澄ます月"], ["師走", "師も走る、締めくくりと再生の月"],
+];
+function lunarMonth(y, m, d) {
+  const age = moonAge(y, m, d);
+  const t = Date.UTC(y, m - 1, d, 3);
+  const find = (start) => {
+    const end = start + SYN * 86400000;
+    for (const yy of [y - 1, y, y + 1]) for (const [cm, cd, lm] of CHUKI) {
+      const ct = Date.UTC(yy, cm - 1, cd, 3);
+      if (ct >= start && ct < end) return lm;
+    }
+    return 0;
+  };
+  const start = t - age * 86400000;
+  let lm = find(start);
+  let leap = false;
+  if (!lm) { lm = find(start - SYN * 86400000) || 1; leap = true; }
+  return { num: lm, leap, name: LUNAR[lm - 1][0], meaning: LUNAR[lm - 1][1], day: Math.floor(age) + 1 };
+}
+
+// ---------- 質問 ----------
+// axis: どの軸か、dir: 「そう思う」がどちらの文字に寄るか
+const QUESTIONS = [
+  { axis: "c", dir: "C", text: "新しいことを始めるとき、\n胸が高鳴るのを感じる" },
+  { axis: "f", dir: "F", text: "満月の夜は、\n誰かと語り合いたくなる" },
+  { axis: "s", dir: "S", text: "迷ったときは、考えるより先に\n体が動いている" },
+  { axis: "a", dir: "A", text: "まだ見ぬ未来を思うと、\n力がわいてくる" },
+  { axis: "c", dir: "R", text: "何かを手放したあと、\n心がふっと軽くなる" },
+  { axis: "f", dir: "N", text: "本当の気持ちは、\n胸の奥にそっとしまっておく" },
+  { axis: "s", dir: "W", text: "静かな場所で、心が満ちるのを\n待つ時間が好きだ" },
+  { axis: "a", dir: "D", text: "過ぎた日々の思い出に、\nそっと浸る時間が好きだ" },
+];
+const STAR_WEIGHT = 1.5; // 生まれた星の声の重み（質問2問は合計で -4〜+4）
+
+const AXES = [
+  { key: "c", pos: "C", neg: "R", posName: "創造", negName: "解放", posDesc: "満ちる月", negDesc: "欠ける月" },
+  { key: "f", pos: "F", neg: "N", posName: "輝き", negName: "秘め", posDesc: "満月寄り", negDesc: "新月寄り" },
+  { key: "s", pos: "S", neg: "W", posName: "炎風", negName: "地水", posDesc: "動いて照らす", negDesc: "静かに満たす" },
+  { key: "a", pos: "A", neg: "D", posName: "昇陽", negName: "沈陽", posDesc: "昇る太陽", negDesc: "沈む太陽" },
+];
+
+// ---------- 16の魂の型 ----------
+const CLANS = {
+  CN: { name: "三日月の民", icon: "🌒", desc: "静かに何かを始める、可能性の魂" },
+  CF: { name: "望月の民", icon: "🌕", desc: "満ちて輝き、まわりを照らす魂" },
+  RF: { name: "十六夜の民", icon: "🌖", desc: "満月を過ぎても、惜しみなく分け与える魂" },
+  RN: { name: "有明の民", icon: "🌘", desc: "夜明けに溶けていく、神秘と洞察の魂" },
+};
+
+const TYPES = {
+  CNSA: { name: "開拓者", en: "THE PIONEER", catch: "誰も通っていない道に、最初の足あとをつける人。",
+    desc: "細い三日月が闇を切りひらくように、あなたはまだ形のないものに最初の光を当てる魂を持っています。前例がないことほど心が燃え、ひとたび動き出せば迷いは追い風に変わります。あなたの一歩が、あとに続く誰かの道しるべになるでしょう。",
+    light: ["ゼロから始める勇気", "失敗を恐れない行動力", "未来を信じる楽観"], shadow: ["始めたことを途中で手放しがち", "まわりの歩幅を置き去りにしやすい"],
+    message: "あなたが踏み出すその一歩を、月はずっと待っていました。" },
+  CNSD: { name: "探究者", en: "THE SEEKER", catch: "「なぜ？」を追いかけて、宇宙の果てまで行ける人。",
+    desc: "あなたの中には、答えのない問いを愛する静かな炎が燃えています。人が素通りする小さな謎に足を止め、その奥にある真理を確かめずにはいられません。夕日が沈むように物事の終わりを見つめ、そこから新しい問いを生み出す力を持っています。",
+    light: ["本質を見抜く洞察力", "ひとつのことを掘り下げる集中力", "常識を疑える自由な発想"], shadow: ["考えすぎて動けなくなることがある", "興味のないことには冷たく見られがち"],
+    message: "問い続けるあなたの心こそが、いちばん美しい答えです。" },
+  CNWA: { name: "庭師", en: "THE GARDENER", catch: "小さな芽を信じて、気長に育てられる人。",
+    desc: "三日月が少しずつ満ちていくように、あなたは時間をかけて物事を育てる魂を持っています。目に見える結果を急がず、土を耕し、水をやり、季節を待つことができる人。あなたのそばでは、人も夢も安心して根を張れるのです。",
+    light: ["粘り強さと忍耐", "人や物事の可能性を信じる心", "コツコツ積み上げる誠実さ"], shadow: ["変化を求められると戸惑いやすい", "自分の成長を後回しにしがち"],
+    message: "今まいている種は、あなたが思うより大きな花になります。" },
+  CNWD: { name: "夢見人", en: "THE DREAMER", catch: "心の中に、もうひとつの宇宙を持っている人。",
+    desc: "あなたの内側には、誰にも見えない豊かな世界が広がっています。静かな夜にこそ想像の翼は大きくひらき、物語や美しいものが次々に生まれます。現実の速さに疲れたときは、あなたの宇宙に帰ればいい。そこには、あなただけの星が輝いています。",
+    light: ["豊かな想像力と感受性", "人の痛みに気づける繊細さ", "独自の美意識"], shadow: ["現実の手続きが苦手になりやすい", "傷つくのを恐れて心を閉ざしがち"],
+    message: "夢を見る力は、世界を変える力と同じ場所から生まれています。" },
+  CFSA: { name: "太陽王", en: "THE SOVEREIGN", catch: "そこにいるだけで場が明るくなる、生まれながらの主役。",
+    desc: "満ちていく月と昇る太陽、ふたつの光を宿して生まれたあなたは、まわりを照らす天性の輝きを持っています。あなたが笑えば場が明るくなり、あなたが進めば人がついてくる。その光は、誰かの夜を照らすために授けられたものです。",
+    light: ["人を惹きつけるカリスマ", "決断の速さと実行力", "どんな場も明るくする力"], shadow: ["弱さを見せるのが苦手", "自分の光で人の影を見落としがち"],
+    message: "あなたが輝くことを、遠慮しなくていいのです。" },
+  CFSD: { name: "演出家", en: "THE DIRECTOR", catch: "人の魅力を引き出して、舞台をつくる人。",
+    desc: "あなたは、夕暮れの空のように物事をいちばん美しく見せる瞬間を知っています。自分が前に出るだけでなく、誰かの魅力に光を当て、場全体をひとつの物語に仕立てる才能の持ち主。あなたが手を加えると、ありふれた日常が忘れられない一幕に変わります。",
+    light: ["人の才能を見抜く目", "場の空気を読んで動かす力", "表現力とセンス"], shadow: ["完璧を求めて疲れやすい", "人の評価に心が揺れやすい"],
+    message: "あなたの人生という舞台の主役も、あなた自身です。" },
+  CFWA: { name: "守護者", en: "THE GUARDIAN", catch: "大切な人の居場所を、どっしり守る人。",
+    desc: "満ちる月の豊かさと大地の確かさを宿したあなたは、人が帰ってこられる場所をつくる魂です。嵐の日も揺らがず、大切なものを守り抜く強さを持っています。あなたの存在そのものが、まわりの人にとっての灯台なのです。",
+    light: ["揺るがない安定感", "責任感と面倒見の良さ", "人を安心させる包容力"], shadow: ["抱え込みすぎて無理をしがち", "変化より現状維持を選びやすい"],
+    message: "守る人であるあなたも、誰かに守られていいのです。" },
+  CFWD: { name: "調律師", en: "THE HARMONIZER", catch: "ばらばらの心を、ひとつの和音にまとめる人。",
+    desc: "あなたは、満月の光がすべてを等しく照らすように、人と人の間にある見えない糸を感じ取る魂です。対立や不協和音に気づき、そっと手を入れて美しい調和に変えていく。あなたがいる場所には、自然と穏やかな音楽が流れはじめます。",
+    light: ["人の気持ちを察する共感力", "争いをおさめる調整力", "公平で穏やかなまなざし"], shadow: ["自分の本音を後回しにしがち", "嫌われることを恐れやすい"],
+    message: "あなた自身の心の音色にも、どうか耳をすませて。" },
+  RFSA: { name: "伝道師", en: "THE EVANGELIST", catch: "自分が感動したものを、世界中に広めたくなる人。",
+    desc: "満月を過ぎた十六夜の月が惜しみなく光を注ぐように、あなたは受け取った感動を人に分け与えずにはいられない魂です。あなたの熱い言葉は人の心に火を灯し、その火はまた別の誰かへと渡っていく。あなたは光を運ぶ人なのです。",
+    light: ["人を巻き込む情熱", "言葉で心を動かす力", "前向きなエネルギー"], shadow: ["熱くなりすぎて押しつけがちに", "飽きっぽさが顔を出すことも"],
+    message: "あなたが灯した小さな火は、あなたの知らない場所で燃え続けています。" },
+  RFSD: { name: "吟遊詩人", en: "THE BARD", catch: "痛みも喜びも、物語にして届ける人。",
+    desc: "あなたは、人生のあらゆる出来事を歌や物語に変えて届ける魂を持っています。喜びだけでなく、悲しみや別れさえも、あなたの手にかかれば誰かを励ます言葉になる。沈む夕日のように、終わりの中に美しさを見つけられる人です。",
+    light: ["感情を表現する才能", "人の心に寄り添う言葉", "人生を楽しむ遊び心"], shadow: ["気分の波に流されやすい", "ひとつの場所に落ち着きにくい"],
+    message: "あなたの物語を、待っている人がいます。" },
+  RFWA: { name: "治癒師", en: "THE HEALER", catch: "隣にいるだけで、人の心をほどく人。",
+    desc: "満月のあとの柔らかな光のように、あなたは傷ついた心をそっと包み込む力を持っています。大きな言葉はいらない。あなたが隣にいて、話を聞くだけで、人はまた歩き出す勇気を取り戻すのです。その優しさは、明日へ向かう力をくれます。",
+    light: ["深い思いやり", "人を否定しない受容力", "困難の中でも希望を見る心"], shadow: ["人の痛みを背負いすぎる", "自分の疲れに気づくのが遅れがち"],
+    message: "あなたが癒してきたぶんだけ、あなたも癒されていいのです。" },
+  RFWD: { name: "語り部", en: "THE STORYTELLER", catch: "受け継いだ知恵を、次の世代へ手渡す人。",
+    desc: "あなたは、過去から受け取った大切なものを未来へとつなぐ魂です。古い物語、人の知恵、忘れられそうな想い――それらを静かに抱きしめ、次の誰かへやさしく手渡していく。時を越える橋をかけられる、数少ない人なのです。",
+    light: ["物事を長い目で見る視野", "信頼される誠実さ", "経験を知恵に変える力"], shadow: ["過去にとらわれやすい", "新しいものへの警戒心が強め"],
+    message: "あなたがつないできた糸は、まだ見ぬ誰かを救います。" },
+  RNSA: { name: "放浪者", en: "THE WANDERER", catch: "ひとつの場所にとどまらず、風のように生きる人。",
+    desc: "夜明け前の空を渡る有明の月のように、あなたは境界を越えて自由に生きる魂を持っています。決められた道より、自分の足で見つけた道を信じる人。たくさんの出会いと別れが、あなたを誰よりも広い心の持ち主にしていきます。",
+    light: ["縛られない自由な精神", "どこでも生きていける適応力", "新しい世界への好奇心"], shadow: ["根を張ることを避けがち", "大切な人に寂しさを感じさせることも"],
+    message: "あなたが風であることを、空はちゃんと知っています。" },
+  RNSD: { name: "錬金術師", en: "THE ALCHEMIST", catch: "失ったものさえ、金に変えてしまう人。",
+    desc: "欠けていく月と沈む太陽、ふたつの終わりを宿して生まれたあなたは、終わりを始まりに変える魂です。挫折も喪失も、あなたの中で静かに燃やされ、やがて誰にも真似できない力へと生まれ変わる。どん底からこそ、あなたの本当の物語が始まるのです。",
+    light: ["逆境を力に変える強さ", "物事を根本から変える変革力", "人の本音を見抜く鋭さ"], shadow: ["極端に走りやすい", "人に頼るのが苦手"],
+    message: "あなたが手放したものは、形を変えて必ず還ってきます。" },
+  RNWA: { name: "星読み", en: "THE STARGAZER", catch: "まだ誰も気づいていない流れを、先に感じ取る人。",
+    desc: "夜明け前の静けさの中で、あなたは誰よりも早く次の時代の気配を感じ取ります。理屈では説明できない直感が、いつもあなたを正しい場所へ導いてきたはずです。星の配置を読むように、人の心や世の中の流れを読める人なのです。",
+    light: ["鋭い直感と先見の明", "物事の流れを読む力", "静かで深い知性"], shadow: ["感じたことを言葉にするのが苦手", "ひとりで抱えて孤独になりがち"],
+    message: "あなたの直感は、星々からの手紙です。信じて大丈夫。" },
+  RNWD: { name: "隠者", en: "THE HERMIT", catch: "静けさの中で、真理にいちばん近づく人。",
+    desc: "月がもっとも細くなる夜明け前、あなたはその静寂の中で生まれました。にぎやかな世界から一歩離れ、ひとりの時間の中で深い真理にたどりつく魂です。あなたが灯す小さなランプは、迷った誰かにとって何よりも確かな道しるべになります。",
+    light: ["深い思索と精神性", "流されない芯の強さ", "本質だけを見つめる目"], shadow: ["人との距離を取りすぎることがある", "自分の価値を低く見積もりがち"],
+    message: "静けさの中にいるあなたにこそ、宇宙はいちばん近くで語りかけています。" },
+};
+
+// 同じ星を持つ偉人（誕生日から実際に計算して振り分ける）
+const PEOPLE = [
+  ["アインシュタイン", "1879-03-14"], ["ナポレオン", "1769-08-15"], ["モーツァルト", "1756-01-27"], ["ガンディー", "1869-10-02"],
+  ["マリー・キュリー", "1867-11-07"], ["ニュートン", "1643-01-04"], ["エジソン", "1847-02-11"], ["ニコラ・テスラ", "1856-07-10"],
+  ["ダーウィン", "1809-02-12"], ["リンカーン", "1809-02-12"], ["ゴッホ", "1853-03-30"], ["ピカソ", "1881-10-25"],
+  ["チャップリン", "1889-04-16"], ["ヘレン・ケラー", "1880-06-27"], ["ナイチンゲール", "1820-05-12"], ["オードリー・ヘプバーン", "1929-05-04"],
+  ["マリリン・モンロー", "1926-06-01"], ["ジョン・レノン", "1940-10-09"], ["スティーブ・ジョブズ", "1955-02-24"], ["ウォルト・ディズニー", "1901-12-05"],
+  ["マザー・テレサ", "1910-08-26"], ["キング牧師", "1929-01-15"], ["ネルソン・マンデラ", "1918-07-18"], ["ショパン", "1810-03-01"],
+  ["バッハ", "1685-03-31"], ["ゲーテ", "1749-08-28"], ["フロイト", "1856-05-06"], ["ユング", "1875-07-26"],
+  ["ニーチェ", "1844-10-15"], ["ココ・シャネル", "1883-08-19"], ["フリーダ・カーロ", "1907-07-06"], ["アンネ・フランク", "1929-06-12"],
+  ["ベーブ・ルース", "1895-02-06"], ["エルヴィス・プレスリー", "1935-01-08"], ["ブルース・リー", "1940-11-27"], ["坂本龍馬", "1836-01-03"],
+  ["西郷隆盛", "1828-01-23"], ["勝海舟", "1823-03-12"], ["福沢諭吉", "1835-01-10"], ["夏目漱石", "1867-02-09"],
+  ["宮沢賢治", "1896-08-27"], ["野口英世", "1876-11-09"], ["樋口一葉", "1872-05-02"], ["手塚治虫", "1928-11-03"],
+  ["美空ひばり", "1937-05-29"], ["葛飾北斎", "1760-10-31"], ["伊能忠敬", "1745-02-11"], ["太宰治", "1909-06-19"],
+  ["芥川龍之介", "1892-03-01"], ["与謝野晶子", "1878-12-07"], ["津田梅子", "1864-12-31"], ["黒澤明", "1910-03-23"],
+  ["本田宗一郎", "1906-11-17"], ["松下幸之助", "1894-11-27"], ["岡本太郎", "1911-02-26"], ["湯川秀樹", "1907-01-23"],
+  ["吉田松陰", "1830-09-20"], ["土方歳三", "1835-05-31"], ["高杉晋作", "1839-09-27"], ["新渡戸稲造", "1862-09-01"],
+  ["北里柴三郎", "1853-01-29"], ["マリー・アントワネット", "1755-11-02"], ["トルストイ", "1828-09-09"], ["ドストエフスキー", "1821-11-11"],
+  ["アンデルセン", "1805-04-02"], ["ジュール・ヴェルヌ", "1828-02-08"], ["モネ", "1840-11-14"], ["チャイコフスキー", "1840-05-07"],
+  ["ガウディ", "1852-06-25"], ["アメリア・イアハート", "1897-07-24"], ["ガガーリン", "1934-03-09"], ["ニール・アームストロング", "1930-08-05"],
+  ["カール・セーガン", "1934-11-09"], ["ホーキング", "1942-01-08"], ["ハッブル", "1889-11-20"], ["サン＝テグジュペリ", "1900-06-29"],
+  ["オーヴィル・ライト", "1871-08-19"], ["グラハム・ベル", "1847-03-03"], ["ノーベル", "1833-10-21"], ["ベートーヴェン", "1770-12-16"],
+  ["シューベルト", "1797-01-31"], ["ルノワール", "1841-02-25"], ["ダリ", "1904-05-11"], ["ウォーホル", "1928-08-06"],
+  ["ヘミングウェイ", "1899-07-21"], ["マーク・トウェイン", "1835-11-30"], ["ルイス・キャロル", "1832-01-27"], ["ヴィクトリア女王", "1819-05-24"],
+  ["チャーチル", "1874-11-30"], ["ケネディ", "1917-05-29"], ["F・ルーズベルト", "1882-01-30"],
+];
+function peopleOf(code) {
+  const list = [];
+  for (const [name, date] of PEOPLE) {
+    const [y, m, d] = date.split("-").map(Number);
+    const s = starAxes(y, m, d);
+    if (s.c + s.f + s.s + s.a === code) list.push([name, y]);
+  }
+  return list;
+}
+
+// ---------- 月の絵 ----------
+function drawMoon(svg, age) {
+  const p = age / SYN;
+  const r = 44, cx = 50, cy = 50;
+  const rx = Math.abs(Math.cos(2 * Math.PI * p)) * r;
+  let lit;
+  if (p < 0.5) lit = `M${cx} ${cy - r} A${r} ${r} 0 0 1 ${cx} ${cy + r} A${rx} ${r} 0 0 ${p < 0.25 ? 0 : 1} ${cx} ${cy - r}`;
+  else lit = `M${cx} ${cy - r} A${r} ${r} 0 0 0 ${cx} ${cy + r} A${rx} ${r} 0 0 ${p < 0.75 ? 0 : 1} ${cx} ${cy - r}`;
+  svg.innerHTML = `
+    <defs><radialGradient id="mg${svg.id}" cx="40%" cy="38%" r="70%">
+      <stop offset="0%" stop-color="#fffdf2"/><stop offset="70%" stop-color="#f6e2a8"/><stop offset="100%" stop-color="#d9b56a"/></radialGradient></defs>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#2a2450" stroke="rgba(233,201,138,.35)" stroke-width="0.8"/>
+    <path d="${lit}" fill="url(#mg${svg.id})"/>`;
+}
+
+// ---------- 星空 ----------
+function startSky() {
+  const cv = document.getElementById("sky");
+  const ctx = cv.getContext("2d");
+  let stars = [];
+  const resize = () => {
+    cv.width = innerWidth * devicePixelRatio;
+    cv.height = innerHeight * devicePixelRatio;
+    stars = Array.from({ length: Math.floor(innerWidth * innerHeight / 3500) }, () => ({
+      x: Math.random() * cv.width, y: Math.random() * cv.height,
+      r: (Math.random() * 1.2 + 0.3) * devicePixelRatio, t: Math.random() * 6.28, s: Math.random() * 0.02 + 0.005,
+    }));
+  };
+  resize();
+  addEventListener("resize", resize);
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const frame = () => {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    for (const s of stars) {
+      s.t += s.s;
+      ctx.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(s.t));
+      ctx.fillStyle = "#ffe9b0";
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
+    }
+    if (!still) requestAnimationFrame(frame);
+  };
+  frame();
+}
+
+// ---------- 画面の流れ ----------
+const $ = (id) => document.getElementById(id);
+const state = { birth: null, answers: [], q: 0 };
+
+function show(id) {
+  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("on"));
+  $(id).classList.add("on");
+  scrollTo(0, 0);
+}
+
+function setupBirth() {
+  const by = $("by"), bm = $("bm"), bd = $("bd");
+  const opt = (sel, v, label) => { const o = document.createElement("option"); o.value = v; o.textContent = label; sel.appendChild(o); };
+  opt(by, "", "年"); opt(bm, "", "月"); opt(bd, "", "日");
+  const now = new Date().getFullYear();
+  for (let y = now; y >= 1920; y--) opt(by, y, y + "年");
+  for (let m = 1; m <= 12; m++) opt(bm, m, m + "月");
+  const fillDays = () => {
+    const keep = bd.value;
+    const n = by.value && bm.value ? new Date(by.value, bm.value, 0).getDate() : 31;
+    bd.innerHTML = ""; opt(bd, "", "日");
+    for (let d = 1; d <= n; d++) opt(bd, d, d + "日");
+    if (keep && keep <= n) bd.value = keep;
+  };
+  fillDays();
+  const check = () => { $("b-birth").disabled = !(by.value && bm.value && bd.value); };
+  by.onchange = () => { fillDays(); check(); };
+  bm.onchange = () => { fillDays(); check(); };
+  bd.onchange = check;
+  $("b-birth").onclick = () => {
+    state.birth = [Number(by.value), Number(bm.value), Number(bd.value)];
+    state.answers = []; state.q = 0;
+    renderQ(); show("s-q");
+  };
+}
+
+function renderQ() {
+  const q = QUESTIONS[state.q];
+  $("progress").innerHTML = QUESTIONS.map((_, i) => `<span class="${i < state.q ? "done" : ""}"></span>`).join("");
+  $("q-num").textContent = `第${["一", "二", "三", "四", "五", "六", "七", "八"][state.q]}の問い`;
+  $("q-text").innerHTML = q.text.replace(/\n/g, "<br>");
+  document.querySelectorAll("#likert button").forEach((b) => b.classList.toggle("picked", state.answers[state.q] === Number(b.dataset.v)));
+  $("b-back").style.visibility = "visible";
+}
+
+function answer(v) {
+  state.answers[state.q] = v;
+  document.querySelectorAll("#likert button").forEach((b) => b.classList.toggle("picked", Number(b.dataset.v) === v));
+  setTimeout(() => {
+    if (state.q < QUESTIONS.length - 1) {
+      state.q++;
+      const el = $("s-q");
+      el.style.animation = "none"; el.offsetHeight; el.style.animation = "";
+      renderQ();
+    } else {
+      reading();
+    }
+  }, 260);
+}
+
+function reading() {
+  show("s-reading");
+  const lines = ["生まれた夜の月を探しています…", "星の配置を読み解いています…", "あなたの声を聴いています…", "魂の型が見えてきました"];
+  let i = 0;
+  $("reading-text").textContent = lines[0];
+  const timer = setInterval(() => {
+    i++;
+    if (i < lines.length) $("reading-text").textContent = lines[i];
+    else { clearInterval(timer); renderResult(); show("s-result"); }
+  }, 900);
+}
+
+/** 星の声とあなたの声を合わせてタイプを決める */
+function diagnose() {
+  const [y, m, d] = state.birth;
+  const star = starAxes(y, m, d);
+  const axes = AXES.map((ax) => {
+    let self = 0;
+    QUESTIONS.forEach((q, i) => { if (q.axis === ax.key) self += (q.dir === ax.pos ? 1 : -1) * (state.answers[i] || 0); });
+    const starDir = star[ax.key] === ax.pos ? 1 : -1;
+    const total = self + starDir * STAR_WEIGHT;
+    const letter = total > 0 ? ax.pos : ax.neg;
+    const selfLetter = self === 0 ? null : (self > 0 ? ax.pos : ax.neg);
+    return { ax, self, total, letter, starLetter: star[ax.key], selfLetter };
+  });
+  return { star, axes, code: axes.map((a) => a.letter).join("") };
+}
+
+function renderResult() {
+  const [y, m, d] = state.birth;
+  const r = diagnose();
+  const t = TYPES[r.code];
+  const clan = CLANS[r.code.slice(0, 2)];
+  $("r-clan").textContent = `${clan.icon} ${clan.name}`;
+  drawMoon($("r-moon"), r.star.age);
+  $("r-code").textContent = r.code;
+  $("r-name").textContent = t.name;
+  $("r-en").textContent = t.en;
+  $("r-catch").textContent = t.catch;
+  $("r-desc").textContent = t.desc + `\n${clan.name}――${clan.desc}。`;
+  $("r-desc").style.whiteSpace = "pre-line";
+  $("r-light").innerHTML = `<h4 class="gold">光（あなたの強み）</h4>` + t.light.map((x) => `<li>${x}</li>`).join("");
+  $("r-shadow").innerHTML = `<h4 style="color:#d9ccff">影（気をつけたいこと）</h4>` + t.shadow.map((x) => `<li>${x}</li>`).join("");
+
+  // 軸ごとの内訳
+  $("r-axes").innerHTML = r.axes.map((a) => {
+    const ax = a.ax;
+    const pos = 50 - Math.max(-1, Math.min(1, a.total / (4 + STAR_WEIGHT))) * 46;
+    const name = (l) => l === ax.pos ? `${ax.pos} ${ax.posName}` : `${ax.neg} ${ax.negName}`;
+    let note;
+    if (a.selfLetter === null) note = `<span class="tag star">🌙 星に委ねた</span>あなたが迷ったぶん、生まれた星が道を示しました。`;
+    else if (a.selfLetter === a.starLetter) note = `<span class="tag star">🌙 星に導かれた資質</span>生まれた星とあなたの心が、同じ方角を指しています。`;
+    else if (a.letter === a.selfLetter) note = `<span class="tag self">🔥 自ら選びとった資質</span>星は${name(a.starLetter)}を示しましたが、あなたの意志が運命を書き換えました。`;
+    else note = `<span class="tag star">🌙 星が後押しした資質</span>あなたの心は${name(a.selfLetter)}に揺れましたが、星の力がこちらへ導きました。`;
+    return `<div class="axis">
+      <div class="axis-top"><span class="${a.letter === ax.pos ? "win" : ""}"><b>${ax.pos}</b> ${ax.posName}（${ax.posDesc}）</span>
+      <span class="${a.letter === ax.neg ? "win" : ""}">${ax.negName}（${ax.negDesc}） <b>${ax.neg}</b></span></div>
+      <div class="meter"><i style="left:${pos}%"></i></div>
+      <div class="axis-note">${note}</div></div>`;
+  }).join("");
+
+  // 生まれた夜
+  const sg = sign(m, d);
+  const lm = lunarMonth(y, m, d);
+  $("r-facts").innerHTML = `
+    <dt>生まれた日</dt><dd>${y}年${m}月${d}日</dd>
+    <dt>その夜の月</dt><dd>${moonName(r.star.age)}（月齢 ${r.star.age.toFixed(1)}）</dd>
+    <dt>守護月</dt><dd>${lm.leap ? "閏" : ""}${lm.name}　<span class="sub">${lm.meaning}</span></dd>
+    <dt>星座</dt><dd>${sg[1]}（${sg[2]}の星）</dd>
+    <dt>太陽</dt><dd>${r.star.a === "A" ? "昇る太陽の季節（冬至〜夏至）" : "沈む太陽の季節（夏至〜冬至）"}</dd>
+    <dt>星の型</dt><dd>${r.star.c + r.star.f + r.star.s + r.star.a}「${TYPES[r.star.c + r.star.f + r.star.s + r.star.a].name}」</dd>`;
+
+  // 偉人
+  const ppl = peopleOf(r.code);
+  $("r-people").innerHTML = ppl.length
+    ? ppl.slice(0, 6).map(([n, yy]) => `<span>${n}<small>${yy}年生</small></span>`).join("")
+    : `<span class="sub">まだ記録に残っていない、新しい星です</span>`;
+
+  // 共鳴相手：月の向きと元素が反対のタイプ（欠けたところを補い合う）
+  const flip = { C: "R", R: "C", S: "W", W: "S" };
+  const mc = flip[r.code[0]] + r.code[1] + flip[r.code[2]] + r.code[3];
+  $("r-match").innerHTML = `<b>${TYPES[mc].name}</b> <span class="sub">${mc}</span><br>
+    <span style="font-size:14px">${TYPES[mc].catch}<br>満ちる月と欠ける月、炎と水。正反対の性質だからこそ、互いの欠けた部分を満たし合える魂です。</span>`;
+
+  $("r-message").textContent = t.message;
+  state.result = { code: r.code, name: t.name, catch: t.catch };
+}
+
+function share() {
+  const r = state.result;
+  const text = `月詠み診断の結果、私の魂の型は「${r.name}」（${r.code}）でした。\n${r.catch}\n`;
+  const url = location.href.split("#")[0];
+  if (navigator.share) {
+    navigator.share({ title: "月詠み診断", text, url }).catch(() => {});
+    return;
+  }
+  const done = () => { $("toast").classList.add("on"); setTimeout(() => $("toast").classList.remove("on"), 1800); };
+  if (navigator.clipboard) navigator.clipboard.writeText(text + url).then(done, () => {});
+}
+
+// ---------- 起動 ----------
+startSky();
+drawMoon($("title-moon"), 11.5);
+setupBirth();
+$("b-start").onclick = () => show("s-birth");
+document.querySelectorAll("#likert button").forEach((b) => b.onclick = () => answer(Number(b.dataset.v)));
+$("b-back").onclick = () => { if (state.q > 0) { state.q--; renderQ(); } else show("s-birth"); };
+$("b-share").onclick = share;
+$("b-again").onclick = () => { state.answers = []; state.q = 0; show("s-title"); };
+
+// 確認用：#preview=1990-05-12/2,1,0,-1,2,1,0,-2 で結果画面を直接ひらく
+const pv = location.hash.match(/^#preview=(\d+)-(\d+)-(\d+)\/([-\d,]+)/);
+if (pv) {
+  state.birth = [Number(pv[1]), Number(pv[2]), Number(pv[3])];
+  state.answers = pv[4].split(",").map(Number);
+  renderResult(); show("s-result");
+}
+</script>
+</body>
+</html>
