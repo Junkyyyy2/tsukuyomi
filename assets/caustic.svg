@@ -6,7 +6,7 @@
       <feFuncR type="table" tableValues="0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0"/>
     </feComponentTransfer>
     <feColorMatrix in="r" type="matrix" values="0 0 0 0 0.16  0 0 0 0 0.42  0 0 0 0 1  1.6 0 0 0 0"/>
-    <feGaussianBlur stdDeviation="0.6"/>
+    <feGaussianBlur stdDeviation="1.4"/>
   </filter>
   <rect width="640" height="640" filter="url(#c)"/>
 </svg>

@@ -40,23 +40,25 @@ body {
 .caustic {
   position: fixed; inset: -20%; z-index: 0; pointer-events: none;
   background: url("assets/caustic.svg") 0 0 / 640px 640px repeat;
-  opacity: 0.5; mix-blend-mode: screen;
-  animation: drift 90s linear infinite;
+  opacity: 0.16; mix-blend-mode: screen;
+  animation: drift 240s linear infinite;
 }
-.caustic.b { opacity: 0.22; background-size: 900px 900px; animation-duration: 140s; animation-direction: reverse; }
+.caustic.b { opacity: 0.08; background-size: 900px 900px; animation-duration: 360s; animation-direction: reverse; }
 @keyframes drift { to { transform: translate(640px, 320px); } }
 /* 足もとの青く光るタイル */
 .floor {
   position: fixed; left: -50%; right: -50%; bottom: -10vh; height: 55vh; z-index: 0; pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(63, 216, 255, 0.35) 1px, transparent 1px) 0 0 / 70px 70px,
-    linear-gradient(0deg, rgba(63, 216, 255, 0.35) 1px, transparent 1px) 0 0 / 70px 70px,
+    linear-gradient(90deg, rgba(63, 216, 255, 0.2) 1px, transparent 1px) 0 0 / 70px 70px,
+    linear-gradient(0deg, rgba(63, 216, 255, 0.2) 1px, transparent 1px) 0 0 / 70px 70px,
     radial-gradient(ellipse at 50% 0%, rgba(21, 70, 232, 0.55), rgba(4, 16, 58, 0.2) 70%);
   transform: perspective(420px) rotateX(62deg); transform-origin: 50% 0;
   -webkit-mask-image: linear-gradient(180deg, transparent, #000 35%);
   mask-image: linear-gradient(180deg, transparent, #000 35%);
 }
 #sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+/* 中央を少し沈めて文字を読みやすくする */
+.vignette { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse 70% 55% at 50% 45%, rgba(1, 6, 26, 0.55), transparent 75%), radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0, 2, 12, 0.7)); }
 .butterfly { position: fixed; z-index: 1; width: 34px; height: 34px; pointer-events: none; filter: drop-shadow(0 0 8px var(--cyan)); opacity: 0.9; }
 .butterfly svg { width: 100%; height: 100%; animation: flap 0.5s ease-in-out infinite alternate; transform-origin: 50% 50%; }
 @keyframes flap { to { transform: scaleX(0.25); } }
@@ -226,7 +228,7 @@ footer { font-family: "Shippori Mincho B1", serif; margin-top: 48px; text-align:
 </style>
 </head>
 <body>
-<div class="caustic" aria-hidden="true"></div><div class="caustic b" aria-hidden="true"></div><div class="floor" aria-hidden="true"></div>
+<div class="caustic" aria-hidden="true"></div><div class="caustic b" aria-hidden="true"></div><div class="floor" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div>
 <canvas id="sky" aria-hidden="true"></canvas>
 <main>
 
